@@ -119,17 +119,22 @@ final class Installer
     }
 
     /**
-     * Saves the configuration keys of the definition with their default value.
+     * Saves the configuration keys of the definition with their default value, as global
+     * values: every shop inherits them until the merchant sets a value per shop or group (MS-03).
      *
-     * @param bool $overwrite true on install; false on upgrade, so values set by the merchant stay
+     * @param bool $overwrite true on install (also removes leftover shop and group values); false on
+     *                        upgrade, so values set by the merchant stay
      */
     private function installConfiguration(bool $overwrite): bool
     {
         foreach ($this->definition->configuration() as $key => $default) {
-            if (!$overwrite && \Configuration::hasKey($key)) {
+            if (!$overwrite && \Configuration::hasKey($key, null, 0, 0)) {
                 continue;
             }
-            if (!\Configuration::updateValue($key, $default)) {
+            if ($overwrite) {
+                \Configuration::deleteByName($key);
+            }
+            if (!\Configuration::updateGlobalValue($key, $default)) {
                 return $this->fail(sprintf('Saving configuration "%s" failed.', $key));
             }
         }
@@ -138,16 +143,16 @@ final class Installer
     }
 
     /**
-     * Gives every generated configuration key a random secret, unless it already has a
-     * value (a token must not change on upgrade).
+     * Gives every generated configuration key a random global secret, unless it already has a
+     * global value (a token must not change on upgrade, and must work in every shop).
      */
     private function installGeneratedConfiguration(): bool
     {
         foreach ($this->definition->generatedConfiguration() as $key) {
-            if (\Configuration::hasKey($key) && (string) \Configuration::get($key) !== '') {
+            if ((string) \Configuration::getGlobalValue($key) !== '') {
                 continue;
             }
-            if (!\Configuration::updateValue($key, bin2hex(random_bytes(16)))) {
+            if (!\Configuration::updateGlobalValue($key, bin2hex(random_bytes(16)))) {
                 return $this->fail(sprintf('Saving configuration "%s" failed.', $key));
             }
         }
@@ -163,7 +168,7 @@ final class Installer
     private function fail(string $message): bool
     {
         $this->errors[] = $message;
-        \PrestaShopLogger::addLog(sprintf('[%s] %s', $this->module->name, $message), 3);
+        \PrestaShopLogger::addLog(sprintf('[%s] %s', $this->module->name, $message), \PrestaShopLogger::LOG_SEVERITY_LEVEL_ERROR);
 
         return false;
     }

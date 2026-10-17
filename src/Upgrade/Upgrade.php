@@ -18,6 +18,7 @@ namespace PrestaShopHeaven\ModuleKit\Upgrade;
 
 use PrestaShopHeaven\ModuleKit\Definition\ModuleDefinitionInterface;
 use PrestaShopHeaven\ModuleKit\Install\Installer;
+use PrestaShopHeaven\ModuleKit\Shop\ShopScope;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -28,7 +29,8 @@ if (!defined('_PS_VERSION_')) {
  *
  * An upgrade runs the migrations that are new in that version and then makes the
  * installation match the module definition (new hooks, new configuration keys, new
- * secrets). The result equals a fresh install of the new version.
+ * secrets). The result equals a fresh install of the new version. It runs in the "all shops"
+ * context, so new hooks and defaults reach every shop (MS-02, MS-03).
  */
 final class Upgrade
 {
@@ -54,7 +56,8 @@ final class Upgrade
 
         $installer = new Installer($module, $definition);
 
-        return $installer->runMigrations($migrations)
-            && $installer->syncDefinition();
+        return ShopScope::runInAllShops(
+            static fn (): bool => $installer->runMigrations($migrations) && $installer->syncDefinition()
+        );
     }
 }

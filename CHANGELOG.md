@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.2.0] - 2026-10-17
+
+### Toegevoegd
+- `Shop\ShopScope`: `runInAllShops()`, `isModuleActiveInShop()`, `shopIds()` (multistore, MS-02/09/11).
+
+### Gewijzigd
+- Install, uninstall en `Upgrade::apply()` draaien in de context "alle winkels": de module staat aan in
+  elke winkel, ook bij installeren vanuit één winkel of `bin/console` (MS-02).
+- Standaardwaarden en gegenereerde tokens zijn globaal (`updateGlobalValue`); een upgrade overschrijft
+  nooit winkel- of groepswaarden; een verse install ruimt oude winkelwaarden op (MS-03).
+
 ## [1.1.0] - 2026-10-17
 
 ### Toegevoegd

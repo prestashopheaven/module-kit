@@ -9,6 +9,7 @@ Gedeelde basis voor alle PrestaShopHeaven-modules (PrestaShop 8.0 – 9.x, PHP 8
 | `Install\Installer` / `Uninstaller` | Migraties, hooks, configuratie, gegenereerde secrets |
 | `Install\Migrator` | SQL-migraties (`migrations/up` + `down`), engine: vanengers/prestashop-library-product-admin-helper |
 | `Upgrade\Upgrade` | Helper voor `upgrade/upgrade-X.Y.Z.php` |
+| `Shop\ShopScope` | Multistore: `runInAllShops()`, `isModuleActiveInShop()`, `shopIds()` |
 
 ## Gebruik in een module
 
@@ -43,6 +44,13 @@ function upgrade_module_1_1_0($module): bool
 
 `Upgrade::apply()` draait de nieuwe migraties en registreert daarna alle hooks en ontbrekende
 config-sleutels uit de definitie. Een upgrade komt zo op hetzelfde uit als een verse installatie.
+
+## Multistore
+
+Install, uninstall en upgrade draaien in de context "alle winkels" (`ShopScope::runInAllShops()`):
+de module staat in elke winkel aan en standaardwaarden en tokens zijn globaal, ook als de module
+vanuit één winkel of via `bin/console` wordt geïnstalleerd. Een upgrade overschrijft nooit waarden die
+de winkelier per winkel of groep heeft gezet.
 
 ## Waarom een trait en geen basisklasse
 

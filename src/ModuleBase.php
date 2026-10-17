@@ -19,6 +19,7 @@ namespace PrestaShopHeaven\ModuleKit;
 use PrestaShopHeaven\ModuleKit\Definition\ModuleDefinitionInterface;
 use PrestaShopHeaven\ModuleKit\Install\Installer;
 use PrestaShopHeaven\ModuleKit\Install\Uninstaller;
+use PrestaShopHeaven\ModuleKit\Shop\ShopScope;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -46,44 +47,51 @@ trait ModuleBase
      * Installs the module: first the PrestaShop registration (parent::install(), which
      * also creates the tabs), then migrations, hooks and configuration.
      *
+     * Runs in the "all shops" context, so the module is enabled in every shop and the
+     * default configuration is global (MS-02), also when installed from one shop or the CLI.
+     *
      * @return bool true when every step succeeded; otherwise the reasons are in $this->_errors
      */
     public function install()
     {
-        if (!parent::install()) {
-            return false;
-        }
+        return ShopScope::runInAllShops(function (): bool {
+            if (!parent::install()) {
+                return false;
+            }
 
-        $installer = new Installer($this, $this->getModuleDefinition());
-        if (!$installer->install()) {
-            $this->_errors = array_merge($this->_errors, $installer->getErrors());
+            $installer = new Installer($this, $this->getModuleDefinition());
+            if (!$installer->install()) {
+                $this->_errors = array_merge($this->_errors, $installer->getErrors());
 
-            return false;
-        }
+                return false;
+            }
 
-        return true;
+            return true;
+        });
     }
 
     /**
      * Uninstalls the module: first the PrestaShop part (parent::uninstall(), which also
-     * removes hooks and tabs), then the down migrations and configuration.
+     * removes hooks and tabs), then the down migrations and configuration, for all shops.
      *
      * @return bool true when every step succeeded; otherwise the reasons are in $this->_errors
      */
     public function uninstall()
     {
-        if (!parent::uninstall()) {
-            return false;
-        }
+        return ShopScope::runInAllShops(function (): bool {
+            if (!parent::uninstall()) {
+                return false;
+            }
 
-        $uninstaller = new Uninstaller($this, $this->getModuleDefinition());
-        if (!$uninstaller->uninstall()) {
-            $this->_errors = array_merge($this->_errors, $uninstaller->getErrors());
+            $uninstaller = new Uninstaller($this, $this->getModuleDefinition());
+            if (!$uninstaller->uninstall()) {
+                $this->_errors = array_merge($this->_errors, $uninstaller->getErrors());
 
-            return false;
-        }
+                return false;
+            }
 
-        return true;
+            return true;
+        });
     }
 
     /**
