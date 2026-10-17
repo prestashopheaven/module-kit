@@ -54,7 +54,7 @@ final class Upgrade
 
         $installer = new Installer($module, $definition);
 
-        return ($migrations === [] || $installer->runMigrations($migrations))
+        return $installer->runMigrations($migrations)
             && $installer->syncDefinition();
     }
 }

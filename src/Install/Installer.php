@@ -60,7 +60,7 @@ final class Installer
      */
     public function install(): bool
     {
-        return $this->runMigrations()
+        return $this->runAllMigrations()
             && $this->registerHooks()
             && $this->installConfiguration(true)
             && $this->installGeneratedConfiguration();
@@ -79,16 +79,29 @@ final class Installer
     }
 
     /**
-     * Runs up migrations: all of them (install) or only the given ones (upgrades).
-     *
-     * @param string[] $timestamps timestamps of the migrations to run; empty = all
+     * Runs every up migration of the module, in filename (timestamp) order (install).
      */
-    public function runMigrations(array $timestamps = []): bool
+    public function runAllMigrations(): bool
     {
         $migrator = new Migrator($this->module->getLocalPath() . $this->definition->migrationsUpDirectory());
-        $success = $timestamps === [] ? $migrator->runAll() : $migrator->run($timestamps);
 
-        return $success || $this->fail('Running the install migrations failed: ' . $migrator->getLastError());
+        return $migrator->runAll() || $this->fail('Running the install migrations failed: ' . $migrator->getLastError());
+    }
+
+    /**
+     * Runs only the given up migrations, in the given order (upgrades). An empty list
+     * runs nothing, so an upgrade without new migrations cannot re-run old ones by accident.
+     *
+     * @param string[] $timestamps timestamps of the migrations to run, e.g. ['202611011200']
+     */
+    public function runMigrations(array $timestamps): bool
+    {
+        if ($timestamps === []) {
+            return true;
+        }
+        $migrator = new Migrator($this->module->getLocalPath() . $this->definition->migrationsUpDirectory());
+
+        return $migrator->run($timestamps) || $this->fail('Running the upgrade migrations failed: ' . $migrator->getLastError());
     }
 
     /**
