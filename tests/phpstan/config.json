@@ -1,0 +1,5 @@
+{
+  "cache_dir": "C:/_GIT/_PrestaShopHeaven/.cache/prestashop",
+  "versions": ["8.1.0", "9.2.0"],
+  "paths": ["src", "tests/phpstan/fixtures"]
+}

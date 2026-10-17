@@ -1,0 +1,8 @@
+includes:
+    - %currentWorkingDirectory%/vendor/prestashop/php-dev-tools/phpstan/ps-module-extension.neon
+
+parameters:
+    level: 6
+    phpVersion: 80100
+    reportUnmatchedIgnoredErrors: false
+    tmpDir: %currentWorkingDirectory%/.cache/phpstan
