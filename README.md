@@ -63,6 +63,13 @@ composer install
 composer check     # lint, cs, PHPStan tegen PS 8 + 9, compat, conventies, tests
 ```
 
-Lokaal gebruiken modules dit package via een path-repository (`../../libraries/*`), met
-`symlink: false`. Na een wijziging: `version` in `composer.json` en `CHANGELOG.md` ophogen,
-committen en taggen (`vX.Y.Z`), en in de module `composer update prestashopheaven/module-kit`.
+Modules halen dit package van Packagist. Wil je een wijziging meteen in een module proberen:
+`vendor/bin/ps-module link` in die module (daarna `ps-module unlink`).
+
+## Release
+
+1. `version` in `composer.json` en `CHANGELOG.md` ophogen.
+2. Commit met het bericht `Release X.Y.Z - <omschrijving>` en push naar `main`.
+3. De release-workflow controleert de versie, draait alle checks (ook PHPStan tegen PS 8 en 9),
+   maakt tag `vX.Y.Z` met een GitHub-release en werkt Packagist bij.
+4. In de modules: `composer update prestashopheaven/module-kit`.
