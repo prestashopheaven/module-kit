@@ -1,6 +1,6 @@
 # prestashopheaven/module-kit
 
-Gedeelde basis voor alle PrestaShopHeaven-modules (PrestaShop 8.0 – 9.x, PHP 8.1+).
+Gedeelde basis voor alle PrestaHaven-modules (PrestaShop 8.0 – 9.x, PHP 8.1+).
 
 | Onderdeel | Wat |
 |---|---|

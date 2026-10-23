@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.2.1] - 2026-10-23
+
+### Gewijzigd
+- Onderhoud: bijgewerkte package-metadata en bestandsheaders.
+
 ## [1.2.0] - 2026-10-17
 
 ### Toegevoegd

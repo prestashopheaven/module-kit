@@ -7,7 +7,7 @@
  * It is also available through the world-wide-web at this URL:
  * https://opensource.org/licenses/AFL-3.0
  *
- * @author    George van Engers | PrestaShopHeaven.com
+ * @author    George van Engers | PrestaHaven.com
  * @copyright Since 2026 George van Engers
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
@@ -26,7 +26,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Standard behaviour of every PrestaShopHeaven module, added to the main module
+ * Standard behaviour of every PrestaHaven module, added to the main module
  * class with `use ModuleBase;`.
  *
  * It is a trait and not a base class on purpose: the Addons validator requires the
