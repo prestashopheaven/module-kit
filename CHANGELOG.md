@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.4.0] - 2026-10-25
+
+### Toegevoegd
+- Knop "Help & support" in de PrestaHaven-balk: opent het ticketformulier van de update-server
+  (`UpdaterNotice::SUPPORT_URL`) in een nieuw tabblad, vooraf ingevuld met de technische naam en versie
+  van de module, de PrestaShop-versie en PHP major.minor (`UpdaterNotice::supportUrl()`). Verder wordt er niets
+  meegestuurd. Teksten in alle 33 talen.
+- Staat de Updater er al, is de updater-melding 30 dagen verborgen, of gaat het om `heavenupdater` zelf, dan toont de
+  module een smalle balk van één regel ("Vragen over <module>? …") met alleen de helpknop, zonder verberglink.
+- `UpdaterNotice::helpLink($module)`: de compacte helpknop voor een eigen template van de module (bijv. een paneel in
+  het productformulier, voor een module zonder eigen pagina's); leeg voor Addons-kopieën. Altijd aanroepen met
+  `class_exists(UpdaterNotice::class)`, want de Addons-build laat `src/Updater` weg.
+- `UpdaterNotice::bar()` (welke balk: updater, smal of geen), `isDirectCopy()`, `helpButton()`, `slimHtml()`.
+
+### Gewijzigd
+- `UpdaterNotice::html()` heeft een optionele parameter `$supportUrl` voor de helpknop naast "Meer informatie".
+
 ## [1.3.0] - 2026-10-25
 
 ### Toegevoegd

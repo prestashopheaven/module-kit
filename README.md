@@ -52,6 +52,32 @@ de module staat in elke winkel aan en standaardwaarden en tokens zijn globaal, o
 vanuit één winkel of via `bin/console` wordt geïnstalleerd. Een upgrade overschrijft nooit waarden die
 de winkelier per winkel of groep heeft gezet.
 
+## PrestaHaven-balk en helpknop (alleen directe build)
+
+`ModuleBase::hookDisplayAdminAfterHeader()` toont op de eigen backoffice-pagina's van de module
+(configuratiepagina en eigen admin-tabs) een balk, alleen voor directe kopieën (lege `module_key`):
+
+- PrestaHaven Updater niet geïnstalleerd: de updater-melding met "Nu installeren", "Meer informatie",
+  "Help & support" en "30 dagen verbergen";
+- anders (Updater geïnstalleerd, melding verborgen, of `heavenupdater` zelf): een smalle balk van één
+  regel, "Vragen over <module>? …", met alleen "Help & support".
+
+"Help & support" opent het ticketformulier van de update-server (`UpdaterNotice::SUPPORT_URL`) in een nieuw tabblad, vooraf ingevuld
+met `module`, `version`, `ps` en `php` (major.minor); verder niets. Geen netwerkverkeer vanuit de winkel.
+
+Heeft een module geen eigen pagina (bijv. alleen een paneel in het productformulier), zet de helpknop
+dan zelf in het template. De Addons-build laat `src/Updater` weg, dus altijd met deze guard (met
+`::class`, zodat het scopen de naam meeneemt):
+
+```php
+use PrestaShopHeaven\ModuleKit\Updater\UpdaterNotice;
+
+$help = class_exists(UpdaterNotice::class) ? UpdaterNotice::helpLink($this) : '';
+// Twig: {{ help|raw }}    Smarty: {$help nofilter}   (de knop is al ge-escapete HTML)
+```
+
+`helpLink()` geeft `''` voor een Addons-kopie, zonder ingelogde medewerker of bij een fout.
+
 ## Waarom een trait en geen basisklasse
 
 De Addons-validator eist dat de hoofdklasse direct `Module`, `PaymentModule` of

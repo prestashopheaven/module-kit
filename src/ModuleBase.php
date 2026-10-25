@@ -118,8 +118,9 @@ trait ModuleBase
     }
 
     /**
-     * The "PrestaHaven Updater not installed" bar on the module's own back-office pages (direct-sale build only; the
-     * Addons build has no Updater folder and never registers this hook).
+     * The PrestaHaven bar on the module's own back-office pages: "PrestaHaven Updater not installed" with a help button,
+     * or a slim "Questions about <module>?" bar with only the help button (UpdaterNotice::render()). Direct-sale build
+     * only: the Addons build has no Updater folder and never registers this hook.
      *
      * A module with its own hookDisplayAdminAfterHeader resolves the clash in its main class:
      * `use ModuleBase, DisplayAdminAfterHeader { DisplayAdminAfterHeader::hookDisplayAdminAfterHeader insteadof ModuleBase; }`
