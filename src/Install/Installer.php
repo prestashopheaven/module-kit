@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace PrestaShopHeaven\ModuleKit\Install;
 
 use PrestaShopHeaven\ModuleKit\Definition\ModuleDefinitionInterface;
+use PrestaShopHeaven\ModuleKit\Updater\UpdaterNotice;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -105,11 +106,16 @@ final class Installer
     }
 
     /**
-     * Registers every hook of the definition.
+     * Registers every hook of the definition, plus the updater notice's hook when the notice is part of this build
+     * (the direct-sale build; the Addons build leaves the Updater folder out).
      */
     private function registerHooks(): bool
     {
-        foreach ($this->definition->hooks() as $hook) {
+        $hooks = $this->definition->hooks();
+        if (class_exists(UpdaterNotice::class)) {
+            $hooks = array_values(array_unique(array_merge($hooks, UpdaterNotice::hooks())));
+        }
+        foreach ($hooks as $hook) {
             if (!$this->module->registerHook($hook)) {
                 return $this->fail(sprintf('Registering hook "%s" failed.', $hook));
             }
