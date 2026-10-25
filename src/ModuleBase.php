@@ -20,6 +20,7 @@ use PrestaShopHeaven\ModuleKit\Definition\ModuleDefinitionInterface;
 use PrestaShopHeaven\ModuleKit\Install\Installer;
 use PrestaShopHeaven\ModuleKit\Install\Uninstaller;
 use PrestaShopHeaven\ModuleKit\Shop\ShopScope;
+use PrestaShopHeaven\ModuleKit\Updater\UpdaterNotice;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -114,5 +115,31 @@ trait ModuleBase
     public function isUsingNewTranslationSystem()
     {
         return true;
+    }
+
+    /**
+     * The "PrestaHaven Updater not installed" bar on the module's own back-office pages (direct-sale build only; the
+     * Addons build has no Updater folder and never registers this hook).
+     *
+     * A module with its own hookDisplayAdminAfterHeader resolves the clash in its main class:
+     * `use ModuleBase, DisplayAdminAfterHeader { DisplayAdminAfterHeader::hookDisplayAdminAfterHeader insteadof ModuleBase; }`
+     *
+     * @param array<string, mixed> $params hook parameters (unused)
+     *
+     * @return string the bar's HTML, or ''
+     */
+    public function hookDisplayAdminAfterHeader($params = [])
+    {
+        if (!class_exists(UpdaterNotice::class)) {
+            return '';
+        }
+        $controllers = [];
+        foreach ($this->getModuleDefinition()->tabs() as $tab) {
+            if (is_string($tab['class_name'] ?? null)) {
+                $controllers[] = $tab['class_name'];
+            }
+        }
+
+        return UpdaterNotice::render($this, $controllers);
     }
 }

@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.3.0] - 2026-10-25
+
+### Toegevoegd
+- Updater-melding (`Updater\UpdaterNotice`, `Updater\UpdaterNoticeTexts`): een balk op de eigen backoffice-pagina's
+  van de module wanneer de gratis PrestaHaven Updater niet geïnstalleerd is, alleen voor directe kopieën (lege
+  `module_key`). "Nu installeren" gebruikt de Module Manager-route van PrestaShop (rechten en demomodus van PrestaShop
+  zelf), plus "Meer informatie" en "30 dagen verbergen". Teksten in de 33 talen van de modules; geen netwerkverkeer.
+- `ModuleBase::hookDisplayAdminAfterHeader()` toont de melding; de Installer registreert de hook alleen als de melding
+  in de build zit (de Addons-build van `ps-module build` laat `src/Updater` weg). Een module met een eigen
+  `hookDisplayAdminAfterHeader` lost de botsing op met `insteadof ModuleBase` (UPD-03).
+
 ## [1.2.1] - 2026-10-23
 
 ### Gewijzigd
