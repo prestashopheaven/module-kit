@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.5.0] - 2026-10-28
+
+### Toegevoegd
+- `AbstractModuleDefinition::DATA_DIRECTORIES` en `dataDirectories()` (interface `DataDirectoriesInterface`): mappen
+  die een module buiten zijn eigen map schrijft (bijv. uploads in `img/modules/<module>`), relatief aan de
+  PrestaShop-root. De `Uninstaller` verwijdert ze als laatste stap (INS-04, SEC-07).
+- `Install\DataDirectoryRemover`: controleert het pad (relatief, geen `.`/`..`, de modulenaam als segment) en
+  verwijdert de map recursief zonder symbolische links te volgen.
+
 ## [1.4.0] - 2026-10-25
 
 ### Toegevoegd

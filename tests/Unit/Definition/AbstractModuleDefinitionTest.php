@@ -18,6 +18,7 @@ namespace PrestaShopHeaven\ModuleKit\Tests\Unit\Definition;
 
 use PHPUnit\Framework\TestCase;
 use PrestaShopHeaven\ModuleKit\Definition\AbstractModuleDefinition;
+use PrestaShopHeaven\ModuleKit\Definition\DataDirectoriesInterface;
 
 /**
  * A module definition only overrides constants; the base methods must return them.
@@ -38,6 +39,8 @@ final class AbstractModuleDefinitionTest extends TestCase
         self::assertSame([], $definition->tabs());
         self::assertSame('migrations/up/', $definition->migrationsUpDirectory());
         self::assertSame('migrations/down/', $definition->migrationsDownDirectory());
+        self::assertSame([], $definition->dataDirectories());
+        self::assertInstanceOf(DataDirectoriesInterface::class, $definition);
     }
 
     /**
@@ -51,6 +54,7 @@ final class AbstractModuleDefinitionTest extends TestCase
             public const GENERATED_CONFIGURATION = ['MYMODULE_TOKEN'];
             public const TABS = [['class_name' => 'AdminMyModule', 'name' => 'My module']];
             public const MIGRATIONS_UP = 'sql/up/';
+            public const DATA_DIRECTORIES = ['img/modules/mymodule'];
         };
 
         self::assertSame(['displayHome', 'actionCartSave'], $definition->hooks());
@@ -58,5 +62,6 @@ final class AbstractModuleDefinitionTest extends TestCase
         self::assertSame(['MYMODULE_TOKEN'], $definition->generatedConfiguration());
         self::assertSame([['class_name' => 'AdminMyModule', 'name' => 'My module']], $definition->tabs());
         self::assertSame('sql/up/', $definition->migrationsUpDirectory());
+        self::assertSame(['img/modules/mymodule'], $definition->dataDirectories());
     }
 }

@@ -31,8 +31,14 @@ final class ModuleDefinition extends AbstractModuleDefinition
     public const HOOKS = ['displayHome'];
     public const CONFIGURATION = ['HEAVENFOO_LIMIT' => 50];
     public const GENERATED_CONFIGURATION = ['HEAVENFOO_CRON_TOKEN'];
+    public const DATA_DIRECTORIES = ['img/modules/heavenfoo']; // weg bij uninstall
 }
 ```
+
+`DATA_DIRECTORIES` (vanaf 1.5.0): mappen die de module buiten zijn eigen map schrijft (uploads in `img/`,
+bestanden in `var/modules/`), relatief aan de PrestaShop-root. De Uninstaller verwijdert ze met alles erin
+(`Install\DataDirectoryRemover`). Een pad moet relatief zijn, zonder `.`/`..`, en de technische naam van de module
+als segment hebben; anders mislukt de uninstall met een melding. Symbolische links worden verwijderd, niet gevolgd.
 
 ```php
 // upgrade/upgrade-1.1.0.php

@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace PrestaShopHeaven\ModuleKit\Install;
 
+use PrestaShopHeaven\ModuleKit\Definition\DataDirectoriesInterface;
 use PrestaShopHeaven\ModuleKit\Definition\ModuleDefinitionInterface;
 
 if (!defined('_PS_VERSION_')) {
@@ -25,7 +26,7 @@ if (!defined('_PS_VERSION_')) {
 /**
  * Removes everything a module created, after parent::uninstall().
  * Hooks and tabs are removed by PrestaShop itself; this class runs the down
- * migrations and deletes the configuration keys.
+ * migrations, deletes the configuration keys and the data directories of the module.
  */
 final class Uninstaller
 {
@@ -55,12 +56,36 @@ final class Uninstaller
     }
 
     /**
-     * Runs the full uninstall: down migrations, then configuration.
+     * Runs the full uninstall: down migrations, configuration, then the data directories.
      */
     public function uninstall(): bool
     {
         return $this->runMigrations()
-            && $this->deleteConfiguration();
+            && $this->deleteConfiguration()
+            && $this->removeDataDirectories();
+    }
+
+    /**
+     * Deletes the directories the module wrote outside its own folder (DataDirectoriesInterface),
+     * relative to the PrestaShop root. A definition without that interface has none.
+     */
+    private function removeDataDirectories(): bool
+    {
+        if (!$this->definition instanceof DataDirectoriesInterface || $this->definition->dataDirectories() === []) {
+            return true;
+        }
+        try {
+            $remover = new DataDirectoryRemover(_PS_ROOT_DIR_, (string) $this->module->name);
+            foreach ($this->definition->dataDirectories() as $directory) {
+                if (!$remover->remove($directory)) {
+                    return $this->fail(sprintf('Deleting the directory "%s" failed.', $directory));
+                }
+            }
+        } catch (\InvalidArgumentException $e) {
+            return $this->fail('Invalid data directory: ' . $e->getMessage());
+        }
+
+        return true;
     }
 
     /**

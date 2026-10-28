@@ -26,7 +26,7 @@ if (!defined('_PS_VERSION_')) {
  * A module only overrides the constants; the methods read them with late static
  * binding (static::HOOKS), so nothing else has to be written.
  */
-abstract class AbstractModuleDefinition implements ModuleDefinitionInterface
+abstract class AbstractModuleDefinition implements ModuleDefinitionInterface, DataDirectoriesInterface
 {
     /**
      * Hooks registered on install. PrestaShop unregisters them on uninstall.
@@ -56,6 +56,15 @@ abstract class AbstractModuleDefinition implements ModuleDefinitionInterface
      * @var array<int, array<string, mixed>>
      */
     public const TABS = [];
+
+    /**
+     * Directories the module writes outside its own folder, relative to the PrestaShop root
+     * (for example 'img/modules/heavenfoo'). The Uninstaller deletes them; each path must
+     * contain the technical name of the module as a segment.
+     *
+     * @var string[]
+     */
+    public const DATA_DIRECTORIES = [];
 
     /** Directory with the install migrations, relative to the module root. */
     public const MIGRATIONS_UP = 'migrations/up/';
@@ -101,6 +110,16 @@ abstract class AbstractModuleDefinition implements ModuleDefinitionInterface
     public function tabs(): array
     {
         return static::TABS;
+    }
+
+    /**
+     * Returns the data directories from static::DATA_DIRECTORIES.
+     *
+     * @return string[]
+     */
+    public function dataDirectories(): array
+    {
+        return static::DATA_DIRECTORIES;
     }
 
     /**
